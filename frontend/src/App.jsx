@@ -4,6 +4,9 @@ import ChatPanel from './components/ChatPanel';
 import WorkspacePanel from './components/WorkspacePanel';
 import './App.css';
 
+// ✅ Define the API URL using the environment variable
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 function App() {
   const [messages, setMessages] = useState([]);
   const [currentUI, setCurrentUI] = useState([]);
@@ -16,7 +19,8 @@ function App() {
     setLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/generate', {
+      // ✅ Updated to use the dynamic API_BASE_URL
+      const res = await axios.post(`${API_BASE_URL}/api/generate`, {
         prompt,
         currentUI: currentUI
       });

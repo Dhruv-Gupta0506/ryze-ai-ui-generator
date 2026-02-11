@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+require('dotenv').config(); // Loads variables from .env
 
 const { generatePlan } = require('./agents/planner');
 const { generateCode } = require('./agents/generator');
@@ -8,7 +8,14 @@ const { generateExplanation } = require('./agents/explainer');
 const { validateUI } = require('./agents/validator');
 
 const app = express();
-app.use(cors());
+
+// ✅ FIX: Use FRONTEND_URL from .env instead of default cors()
+app.use(cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    methods: ['GET', 'POST'],
+    credentials: true
+}));
+
 app.use(express.json());
 
 app.post('/api/generate', async (req, res) => {
@@ -51,5 +58,6 @@ app.post('/api/generate', async (req, res) => {
     }
 });
 
+// ✅ Use PORT from env (required by Render/Railway)
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

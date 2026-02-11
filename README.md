@@ -153,7 +153,7 @@ Try these:
 
 - **Frontend:** React + Vite + Tailwind
 - **Backend:** Node.js + Express
-- **AI:** Google Gemini 1.5 Flash
+- **AI:** Google Gemini 2.5 Flash
 - **Storage:** In-memory (no database)
 
 ---
@@ -210,9 +210,9 @@ Shows:
 
 ## 📧 Contact
 
-**Developer:** [Your Name]  
-**Email:** [Your Email]  
-**GitHub:** [Your GitHub]
+**Developer:** Dhruv Gupta  
+**Email:** dhruvgupta0506@gmail.com
+**GitHub:** github.com/Dhruv-Gupta0506
 
 ---
 

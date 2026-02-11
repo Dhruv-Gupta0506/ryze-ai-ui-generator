@@ -1,33 +1,55 @@
 const express = require('express');
 const cors = require('cors');
-const app = express();
+require('dotenv').config();
 
+const { generatePlan } = require('./agents/planner');
+const { generateCode } = require('./agents/generator');
+const { generateExplanation } = require('./agents/explainer');
+const { validateUI } = require('./agents/validator');
+
+const app = express();
 app.use(cors());
 app.use(express.json());
 
-// This stops the "Cannot GET /" error
-app.get('/', (req, res) => {
-    res.send("Server is running! Frontend can now talk to /api/generate");
+app.post('/api/generate', async (req, res) => {
+    const { prompt, currentUI } = req.body;
+
+    // 🛡️ Safety: Prompt validation
+    if (!prompt || prompt.length > 500) {
+        return res.status(400).json({ error: "Invalid prompt length" });
+    }
+
+    // 🛡️ Safety: Prompt injection detection
+    const suspiciousPatterns = /(<script|javascript:|onerror=|eval\()/i;
+    if (suspiciousPatterns.test(prompt)) {
+        return res.status(400).json({ error: "Invalid characters in prompt" });
+    }
+
+    try {
+        console.log("📋 Step 1: Planning...");
+        const planObj = await generatePlan(prompt, currentUI || []);
+
+        console.log("⚙️  Step 2: Generating UI...");
+        const generatedUI = await generateCode(planObj);
+
+        console.log("🛡️  Step 3: Validating...");
+        const validation = validateUI(generatedUI);
+        if (!validation.valid) {
+            return res.status(400).json({ error: validation.error });
+        }
+
+        console.log("💬 Step 4: Explaining...");
+        const explanation = await generateExplanation(prompt, generatedUI);
+
+        res.json({
+            ui: generatedUI,
+            explanation: explanation
+        });
+    } catch (error) {
+        console.error("❌ Pipeline Error:", error);
+        res.status(500).json({ error: "AI agent failed" });
+    }
 });
 
-app.post('/api/generate', (req, res) => {
-    const { prompt } = req.body;
-    
-    // This is the 3-step agent response the assignment needs
-    res.json({
-        plan: `Planning UI for: ${prompt}`,
-        explanation: "I used a Card to group the elements and a Button for the action.",
-        ui: [
-            {
-                component: "Card",
-                props: { title: "Generated Result" },
-                children: [
-                    { component: "Input", props: { label: "User Input", placeholder: "Enter text..." } },
-                    { component: "Button", props: { text: "Submit", color: "blue" } }
-                ]
-            }
-        ]
-    });
-});
-
-app.listen(5000, () => console.log("Backend running on port 5000"));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

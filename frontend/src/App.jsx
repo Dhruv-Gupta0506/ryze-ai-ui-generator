@@ -4,12 +4,11 @@ import ChatPanel from './components/ChatPanel';
 import WorkspacePanel from './components/WorkspacePanel';
 import './App.css';
 
-// ✅ Define the API URL using the environment variable
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 function App() {
   const [messages, setMessages] = useState([]);
-  const [currentUI, setCurrentUI] = useState([]);
+  const [currentCode, setCurrentCode] = useState("");
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -19,19 +18,20 @@ function App() {
     setLoading(true);
 
     try {
-      // ✅ Updated to use the dynamic API_BASE_URL
       const res = await axios.post(`${API_BASE_URL}/api/generate`, {
         prompt,
-        currentUI: currentUI
+        currentUI: currentCode
       });
 
-      setHistory(prev => [...prev, currentUI]);
-      setCurrentUI(res.data.ui);
+      setHistory(prev => [...prev, currentCode]);
+      setCurrentCode(res.data.code);
       setMessages([...newMessages, { role: 'ai', content: res.data.explanation }]);
     } catch (err) {
       console.error("Error:", err);
-      const errorMsg = err.response?.data?.error || "Failed to generate UI";
-      setMessages([...newMessages, { role: 'ai', content: `Error: ${errorMsg}` }]);
+      setMessages([...newMessages, { 
+        role: 'ai', 
+        content: `Error: ${err.response?.data?.error || 'Failed to generate'}` 
+      }]);
     } finally {
       setLoading(false);
     }
@@ -39,8 +39,7 @@ function App() {
 
   const handleRollback = () => {
     if (history.length === 0) return;
-    const previous = history[history.length - 1];
-    setCurrentUI(previous);
+    setCurrentCode(history[history.length - 1]);
     setHistory(history.slice(0, -1));
   };
 
@@ -52,7 +51,7 @@ function App() {
         onGenerate={handleGenerate}
       />
       <WorkspacePanel
-        currentUI={currentUI}
+        currentCode={currentCode}
         onRollback={handleRollback}
         canRollback={history.length > 0}
       />

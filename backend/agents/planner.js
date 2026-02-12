@@ -1,48 +1,44 @@
 const { genAI } = require("../gemini");
 
-const generatePlan = async (prompt, currentUI = []) => {
+const generatePlan = async (prompt, currentUI = "") => {
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
+  const hasExistingUI = currentUI && currentUI.trim().length > 0;
+
   const systemInstruction = `
-You are a UI PLANNER. Output ONLY JSON.
+You are a UI PLANNER.
 
-CURRENT UI STATE: ${JSON.stringify(currentUI)}
+${hasExistingUI ? `CURRENT UI CODE:\n${currentUI}\n\nTASK: MODIFY the existing UI based on the user request. Preserve existing components and only add/change what is needed.` : `TASK: CREATE a new UI from scratch.`}
 
-TASK:
-1. If current UI is empty → create new layout
-2. If current UI exists → MODIFY it (preserve existing components unless told to remove)
-3. Keep structure unless explicitly asked to change
+USER REQUEST: "${prompt}"
 
-ALLOWED COMPONENTS (use ONLY these):
-- Card: { title: string }
-- Button: { text: string, color: 'blue'|'red'|'green' }
-- Input: { label: string, placeholder: string }
-- Table: { headers: string[], rows: object[] }
-- Navbar: { logo: string, links: string[] }
-- Sidebar: { title: string, items: string[] }
-- Modal: { title: string, isOpen: boolean }
-- Chart: { type: 'bar'|'line'|'pie', data: [{label, value}], title: string }
-- Badge: { text: string, variant: 'blue'|'green'|'red'|'yellow'|'gray' }
-- Alert: { type: 'info'|'success'|'warning'|'error', message: string, title: string }
+ALLOWED COMPONENTS (use only these):
+Card, Button, Input, Table, Navbar, Sidebar, Modal, Chart, Badge, Alert
 
-OUTPUT FORMAT:
+OUTPUT: JSON plan only. No explanation outside the JSON.
+
+FORMAT:
 {
-  "plan": [
-    { "component": "Card", "props": { "title": "Example" }, "children": [] }
-  ]
+  "components": ["Navbar", "Card", "Button"],
+  "layout": "single-column",
+  "reasoning": "Brief reason for component choices",
+  "isModification": ${hasExistingUI}
 }
 `;
 
-  const result = await model.generateContent([systemInstruction, `User Request: ${prompt}`]);
+  const result = await model.generateContent([systemInstruction]);
   const text = result.response.text();
-  
+
   try {
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : text);
-    return parsed.plan || parsed;
+    return JSON.parse(jsonMatch ? jsonMatch[0] : text);
   } catch (e) {
-    console.error("❌ Planner parse error");
-    return currentUI; // Fallback
+    return {
+      components: [],
+      layout: "single-column",
+      reasoning: "",
+      isModification: hasExistingUI
+    };
   }
 };
 

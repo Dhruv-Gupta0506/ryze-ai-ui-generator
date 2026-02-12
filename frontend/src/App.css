@@ -285,3 +285,54 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
 }
+.preview-empty {
+  display: flex;
+  align-items: center;
+  justify-center;
+  height: 400px;
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.preview-error {
+  padding: 2rem;
+  background: #fef2f2;
+  border: 2px solid #fca5a5;
+  border-radius: 0.75rem;
+  color: #991b1b;
+}
+
+.preview-error h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.preview-error p {
+  font-size: 0.875rem;
+  font-family: 'Courier New', monospace;
+}
+/* ```
+
+---
+
+## 🎯 What Changed?
+
+### Before:
+- ❌ Generator returned JSON schema
+- ❌ Frontend tried to render JSON
+- ❌ No actual React code visible
+
+### After:
+- ✅ Generator returns **actual React JSX code**
+- ✅ Frontend **executes the code** to render UI
+- ✅ Code view shows **real React code**
+- ✅ Works like Claude Code (generates and runs code)
+
+---
+
+## 🚀 Test It:
+
+Restart servers and try:
+```
+"Create a card with a red button that says Get Started" */

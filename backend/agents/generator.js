@@ -13,14 +13,16 @@ STRICT RULES — FOLLOW EXACTLY:
 2. Import from './components/library'
 3. Function MUST be named "GeneratedUI"
 4. No syntax errors
-5. Button colors: 'blue', 'red', 'green' ONLY
+5. Button colors MUST be 'blue', 'red', or 'green' — pick based on what user described
 6. ALWAYS pass onClick to Button when it needs interactivity
 7. Use useState for any toggle/interactive behavior
-8. NO inline styles (no style={{ }} anywhere)
-9. NEVER use alert(), confirm(), prompt() — use useState to show/hide content instead
+8. NO inline styles — NO style={{ }} anywhere in the code
+9. NEVER use alert(), confirm(), prompt() — use useState instead
 10. NO console.log statements
-11. NEVER create helper functions like createTableRows or createChartData — pass data directly inline as arrays
-12. When multiple Buttons should appear SIDE BY SIDE in a row, wrap them in a <div> together
+11. NEVER create helper functions — pass all data directly as inline arrays
+12. For "back to top" buttons, use: onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+13. CRITICAL COLOR RULE: If user says "red button" → color="red". If "blue button" → color="blue". If "green button" → color="green". You MUST respect the exact color the user specified.
+14. SPACING RULE: To add space between two side-by-side buttons, put each Button in its own separate <Card> OR place them as separate children of the same parent so Card's gap-4 separates them. NEVER put two Buttons directly inside a plain <div> without space.
 
 ${isModification
     ? `CURRENT CODE TO MODIFY:\n${currentUI}\n\nMake MINIMAL changes. Preserve existing structure. Only add/change what the user asked for.`
@@ -29,23 +31,23 @@ ${isModification
 PLAN:
 ${JSON.stringify(plan, null, 2)}
 
-EXACT COMPONENT PROPS — USE THESE EXACTLY:
+EXACT COMPONENT PROPS:
 
-Button:   <Button text="Label" color="blue" onClick={() => setSomething(!something)} />
+Button:   <Button text="Label" color="red" onClick={() => handler()} />
 Card:     <Card title="Title">children</Card>
-Input:    <Input label="Field Name" placeholder="hint" />
-Table:    <Table headers={['Col1', 'Col2']} rows={[{ col1: 'val', col2: 'val' }]} />
+Input:    <Input label="Name" placeholder="hint" value={val} onChange={(e) => setVal(e.target.value)} />
+Table:    <Table headers={['Col1', 'Col2']} rows={[{ col1: 'a', col2: 'b' }]} />
 Navbar:   <Navbar logo="App Name" links={['Home', 'About']} />
 Sidebar:  <Sidebar title="Menu" items={['Item1', 'Item2']} />
 Modal:    <Modal title="Title" isOpen={showModal}>children</Modal>
-Chart:    <Chart type="bar" title="Sales" data={[{ label: 'Jan', value: 400 }, { label: 'Feb', value: 300 }]} />
+Chart:    <Chart type="bar" title="Sales" data={[{ label: 'Jan', value: 400 }]} />
 Badge:    <Badge text="Active" variant="green" />
-Alert:    <Alert type="success" title="Done" message="Operation successful" />
+Alert:    <Alert type="info" title="Notice" message="Message text" />
 
-EXAMPLE (correct spacing, direct inline data, toggle, no helpers):
+SPACING EXAMPLE — correct way to space two buttons apart:
 \`\`\`jsx
 import React, { useState } from 'react';
-import { Navbar, Card, Button, Table, Chart, Badge } from './components/library';
+import { Navbar, Card, Button, Chart, Table } from './components/library';
 
 export default function GeneratedUI() {
   const [showAnalytics, setShowAnalytics] = useState(false);
@@ -53,11 +55,6 @@ export default function GeneratedUI() {
   return (
     <div>
       <Navbar logo="My App" links={['Home', 'Reports']} />
-
-      <Card title="Overview">
-        <Badge text="Users: 1.5K" variant="green" />
-        <Badge text="Revenue: $5,200" variant="blue" />
-      </Card>
 
       <Card title="Actions">
         <Button text="Get Started" color="red" onClick={() => {}} />
@@ -70,31 +67,37 @@ export default function GeneratedUI() {
 
       {showAnalytics && (
         <Card title="Analytics">
-          <Table
-            headers={['Metric', 'Value', 'Change']}
-            rows={[
-              { metric: 'Revenue', value: '$500,000', change: '+5%' },
-              { metric: 'Users', value: '1,200', change: '+10%' }
-            ]}
-          />
           <Chart
             type="bar"
             title="Monthly Sales"
             data={[
               { label: 'Jan', value: 120 },
-              { label: 'Feb', value: 150 },
-              { label: 'Mar', value: 130 }
+              { label: 'Feb', value: 180 }
             ]}
           />
-          <Button text="Go Back" color="blue" onClick={() => setShowAnalytics(false)} />
+          <Table
+            headers={['Metric', 'Value']}
+            rows={[
+              { metric: 'Revenue', value: '$500,000' },
+              { metric: 'Users', value: '1,200' }
+            ]}
+          />
         </Card>
       )}
+      
+      <Card title="Navigation">
+        <Button 
+          text="Back to Top" 
+          color="red" 
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} 
+        />
+      </Card>
     </div>
   );
 }
 \`\`\`
 
-NOW GENERATE CODE. Valid JSX only. No markdown outside the code block.
+NOW GENERATE CODE. Valid JSX only. No markdown text outside the code block.
 `;
 
   try {

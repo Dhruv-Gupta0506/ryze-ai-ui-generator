@@ -1,7 +1,7 @@
 import React from 'react';
 
-export const Sidebar = ({ title, items = [] }) => (
-  <div className="w-64 bg-gray-50 border-r border-gray-200 h-full p-4 rounded-l-xl">
+export const Sidebar = ({ title, items = [], children }) => (
+  <div className="w-64 bg-gray-50 border-r border-gray-200 p-4 rounded-xl mb-4">
     <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">{title || "Menu"}</h3>
     <ul className="space-y-2">
       {items.map((item, i) => (
@@ -10,5 +10,6 @@ export const Sidebar = ({ title, items = [] }) => (
         </li>
       ))}
     </ul>
+    {children && <div className="mt-4">{children}</div>}
   </div>
 );

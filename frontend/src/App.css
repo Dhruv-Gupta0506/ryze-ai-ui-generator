@@ -267,24 +267,6 @@ body {
   max-height: calc(100vh - 8rem);
 }
 
-/* ==================== SCROLLBAR ==================== */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
 .preview-empty {
   display: flex;
   align-items: center;
@@ -312,6 +294,7 @@ body {
   font-size: 0.875rem;
   font-family: 'Courier New', monospace;
 }
+
 /* Editable code textarea */
 .code-editor {
   width: 100%;
@@ -328,27 +311,165 @@ body {
   resize: vertical;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-/* ```
 
----
+/* ==================== SCROLLBAR ==================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
 
-## 🎯 What Changed?
+::-webkit-scrollbar-track {
+  background: transparent;
+}
 
-### Before:
-- ❌ Generator returned JSON schema
-- ❌ Frontend tried to render JSON
-- ❌ No actual React code visible
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
 
-### After:
-- ✅ Generator returns **actual React JSX code**
-- ✅ Frontend **executes the code** to render UI
-- ✅ Code view shows **real React code**
-- ✅ Works like Claude Code (generates and runs code)
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
 
----
+/* ==================== MOBILE RESPONSIVE ==================== */
+@media (max-width: 1024px) {
+  .workspace-content {
+    padding: 1.5rem;
+  }
+  
+  .chat-panel {
+    width: 280px;
+  }
+}
 
-## 🚀 Test It:
+@media (max-width: 768px) {
+  body {
+    overflow: auto;
+  }
+  
+  .app-container {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  .chat-panel {
+    width: 100%;
+    height: auto;
+    min-height: 50vh;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .chat-messages {
+    max-height: 40vh;
+  }
+  
+  .workspace-panel {
+    height: auto;
+    min-height: 50vh;
+  }
+  
+  .workspace-content {
+    padding: 1rem;
+  }
+  
+  .workspace-header {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+  
+  .view-toggle {
+    width: 100%;
+  }
+  
+  .toggle-btn {
+    flex: 1;
+    padding: 0.5rem;
+  }
+  
+  .rollback-btn {
+    width: 100%;
+  }
+  
+  .chat-message {
+    max-width: 90%;
+    font-size: 0.8rem;
+  }
+  
+  .preview-area,
+  .code-area {
+    max-width: 100%;
+  }
+  
+  .code-editor {
+    font-size: 0.75rem;
+    padding: 1rem;
+    min-height: 60vh;
+  }
+}
 
-Restart servers and try:
-```
-"Create a card with a red button that says Get Started" */
+@media (max-width: 480px) {
+  .chat-header {
+    padding: 1rem;
+  }
+  
+  .chat-title {
+    font-size: 1rem;
+  }
+  
+  .chat-subtitle {
+    font-size: 0.7rem;
+  }
+  
+  .chat-input-form {
+    padding: 0.75rem;
+    flex-wrap: wrap;
+  }
+  
+  .chat-input {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  .chat-send-btn {
+    width: 100%;
+  }
+  
+  .workspace-header {
+    padding: 0.5rem;
+  }
+  
+  .toggle-btn {
+    font-size: 0.75rem;
+    padding: 0.4rem;
+  }
+  
+  .rollback-btn {
+    font-size: 0.75rem;
+    padding: 0.4rem;
+  }
+  
+  .preview-empty {
+    height: 200px;
+    font-size: 0.8rem;
+  }
+  
+  .code-editor {
+    font-size: 0.7rem;
+  }
+}
+
+/* ==================== LANDSCAPE MOBILE ==================== */
+@media (max-width: 812px) and (orientation: landscape) {
+  .chat-panel {
+    height: auto;
+    min-height: 40vh;
+  }
+  
+  .chat-messages {
+    max-height: 30vh;
+  }
+}

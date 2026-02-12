@@ -14,12 +14,10 @@ function WorkspacePanel({ currentCode, onRollback, canRollback }) {
   const [error, setError] = useState(null);
   const [editableCode, setEditableCode] = useState("");
 
-  // Sync editableCode when currentCode changes from outside (new generation or rollback)
   useEffect(() => {
     setEditableCode(currentCode || "");
   }, [currentCode]);
 
-  // Re-render preview whenever editableCode changes
   useEffect(() => {
     if (!editableCode) {
       setPreviewComponent(null);
@@ -84,24 +82,14 @@ function WorkspacePanel({ currentCode, onRollback, canRollback }) {
     <div className="workspace-panel">
       <div className="workspace-header">
         <div className="view-toggle">
-          <button
-            onClick={() => setView("preview")}
-            className={`toggle-btn ${view === 'preview' ? 'active' : ''}`}
-          >
+          <button onClick={() => setView("preview")} className={`toggle-btn ${view === 'preview' ? 'active' : ''}`}>
             Preview
           </button>
-          <button
-            onClick={() => setView("code")}
-            className={`toggle-btn ${view === 'code' ? 'active' : ''}`}
-          >
+          <button onClick={() => setView("code")} className={`toggle-btn ${view === 'code' ? 'active' : ''}`}>
             Code
           </button>
         </div>
-        <button
-          onClick={onRollback}
-          disabled={!canRollback}
-          className="rollback-btn"
-        >
+        <button onClick={onRollback} disabled={!canRollback} className="rollback-btn">
           ↩ Rollback
         </button>
       </div>

@@ -184,7 +184,7 @@ Try these:
 
 ## 📹 Demo Video
 
-[Link to your demo video]
+https://youtu.be/SkdBbPvZnRA
 
 Shows:
 - Initial UI generation

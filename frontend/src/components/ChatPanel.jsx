@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 function ChatPanel({ messages, loading, onGenerate }) {
   const [input, setInput] = useState("");
+  const messagesEndRef = useRef(null);
+
+  // Auto-scroll to bottom whenever messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, loading]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -40,6 +46,9 @@ function ChatPanel({ messages, loading, onGenerate }) {
         {loading && (
           <div className="chat-loading">AI is thinking...</div>
         )}
+
+        {/* Invisible anchor to scroll to */}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Input */}

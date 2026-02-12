@@ -23,14 +23,21 @@ function App() {
         currentUI: currentCode
       });
 
-      setHistory(prev => [...prev, currentCode]);
+      // Only save to history if there was actual code before this generation
+      if (currentCode.trim()) {
+        setHistory(prev => [...prev, currentCode]);
+      }
+
       setCurrentCode(res.data.code);
       setMessages([...newMessages, { role: 'ai', content: res.data.explanation }]);
+
     } catch (err) {
       console.error("Error:", err);
-      setMessages([...newMessages, { 
-        role: 'ai', 
-        content: `Error: ${err.response?.data?.error || 'Failed to generate'}` 
+      const errorMsg = err.response?.data?.error || 'Something went wrong. Please try again.';
+      // Show error in chat but DO NOT touch currentCode — keep the last working UI
+      setMessages([...newMessages, {
+        role: 'ai',
+        content: `⚠️ ${errorMsg}`
       }]);
     } finally {
       setLoading(false);
@@ -39,8 +46,13 @@ function App() {
 
   const handleRollback = () => {
     if (history.length === 0) return;
-    setCurrentCode(history[history.length - 1]);
-    setHistory(history.slice(0, -1));
+    const previous = history[history.length - 1];
+    setCurrentCode(previous);
+    setHistory(prev => prev.slice(0, -1));
+    setMessages(prev => [...prev, {
+      role: 'ai',
+      content: '↩️ Rolled back to the previous version.'
+    }]);
   };
 
   return (

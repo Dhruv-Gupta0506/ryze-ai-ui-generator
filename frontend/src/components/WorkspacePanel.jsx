@@ -1,21 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import * as ComponentLibrary from './library';
 
+const ALLOWED_COMPONENTS = [
+  'Card','Button','Input','Table','Navbar','Sidebar','Modal',
+  'Chart','Badge','Alert','React','useState','useEffect',
+  'div','p','h1','h2','h3','h4','span','ul','li','a',
+  'section','main','header','nav','footer'
+];
+
 function WorkspacePanel({ currentCode, onRollback, canRollback }) {
   const [view, setView] = useState("preview");
   const [PreviewComponent, setPreviewComponent] = useState(null);
   const [error, setError] = useState(null);
+  const [editableCode, setEditableCode] = useState("");
 
+  // Sync editableCode when currentCode changes from outside (new generation or rollback)
   useEffect(() => {
-    if (!currentCode) {
+    setEditableCode(currentCode || "");
+  }, [currentCode]);
+
+  // Re-render preview whenever editableCode changes
+  useEffect(() => {
+    if (!editableCode) {
       setPreviewComponent(null);
       setError(null);
       return;
     }
 
     try {
-      // Strip import and export lines — components injected manually below
-      let cleanCode = currentCode
+      let cleanCode = editableCode
         .replace(/import\s+[\s\S]*?from\s+['"][^'"]+['"];?\n?/g, '')
         .replace(/export\s+default\s+/g, '')
         .trim();
@@ -24,8 +37,13 @@ function WorkspacePanel({ currentCode, onRollback, canRollback }) {
         throw new Error('Generated code must contain a function named GeneratedUI');
       }
 
-      // Babel transpiles JSX → plain JS at runtime
-      // Without this, new Function() throws SyntaxError on <Button /> etc.
+      // Security: block non-whitelisted JSX components
+      const jsxComponents = [...cleanCode.matchAll(/<([A-Z][a-zA-Z]*)/g)].map(m => m[1]);
+      const unauthorized = jsxComponents.filter(c => !ALLOWED_COMPONENTS.includes(c));
+      if (unauthorized.length > 0) {
+        throw new Error(`Unauthorized components blocked: ${unauthorized.join(', ')}`);
+      }
+
       if (!window.Babel) {
         throw new Error('Babel not loaded — add Babel CDN script to index.html');
       }
@@ -34,7 +52,6 @@ function WorkspacePanel({ currentCode, onRollback, canRollback }) {
         presets: ['react'],
       }).code;
 
-      // Inject all library components as variables into the function scope
       const componentFn = new Function(
         'React',
         'useState',
@@ -61,7 +78,7 @@ function WorkspacePanel({ currentCode, onRollback, canRollback }) {
       setError(err.message);
       setPreviewComponent(null);
     }
-  }, [currentCode]);
+  }, [editableCode]);
 
   return (
     <div className="workspace-panel">
@@ -80,13 +97,12 @@ function WorkspacePanel({ currentCode, onRollback, canRollback }) {
             Code
           </button>
         </div>
-
         <button
           onClick={onRollback}
           disabled={!canRollback}
           className="rollback-btn"
         >
-          ← Rollback
+          ↩ Rollback
         </button>
       </div>
 
@@ -97,22 +113,25 @@ function WorkspacePanel({ currentCode, onRollback, canRollback }) {
               <div className="preview-error">
                 <h3>⚠️ Render Error</h3>
                 <p>{error}</p>
-                <small>Check the Code tab for details</small>
+                <small>Switch to Code tab to fix and edit</small>
               </div>
             ) : PreviewComponent ? (
               <PreviewComponent />
             ) : (
               <div className="preview-empty">
-                <p>No UI generated yet...</p>
+                <p>Describe a UI in the chat to get started...</p>
               </div>
             )}
           </div>
         ) : (
           <div className="code-area">
-            <div className="code-label">GENERATED_REACT.JSX</div>
-            <pre className="code-display">
-              {currentCode || '// No code generated'}
-            </pre>
+            <div className="code-label">GENERATED_REACT.JSX — editable</div>
+            <textarea
+              className="code-editor"
+              value={editableCode}
+              onChange={(e) => setEditableCode(e.target.value)}
+              spellCheck={false}
+            />
           </div>
         )}
       </div>

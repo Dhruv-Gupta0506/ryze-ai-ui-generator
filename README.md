@@ -6,7 +6,7 @@
 
 This is an AI agent that converts natural language → working React UI using a **fixed, deterministic component library**. Built with Gemini AI, React, and Express.
 
-**Live Demo:** [Your deployed URL here]
+**Live Demo:** https://ryze-blond.vercel.app/
 
 ---
 

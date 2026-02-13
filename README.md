@@ -68,7 +68,7 @@ The system uses **10 deterministic components**:
 ### Installation
 ```bash
 # 1. Clone repository
-git clone <your-repo-url>
+git clone https://github.com/Dhruv-Gupta0506/ryze-ai-ui-generator
 cd ryze-ai-project
 
 # 2. Install backend dependencies

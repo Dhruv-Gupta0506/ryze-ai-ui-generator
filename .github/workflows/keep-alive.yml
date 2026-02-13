@@ -1,0 +1,16 @@
+name: Keep Render Awake
+on:
+  schedule:
+    # Runs every 12 minutes (offsetting from standard 5/10/15 blocks)
+    - cron: '*/12 * * * *'
+  workflow_dispatch: 
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Random Delay and Ping
+        run: |
+          # Generates a random sleep between 1 and 60 seconds before pinging
+          sleep $(( ( RANDOM % 60 )  + 1 ))
+          curl -s https://ryze-6gr1.onrender.com/health > /dev/null

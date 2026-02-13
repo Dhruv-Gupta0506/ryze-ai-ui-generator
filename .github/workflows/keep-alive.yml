@@ -1,8 +1,8 @@
 name: Keep Render Awake
 on:
   schedule:
-    # Runs every 12 minutes (offsetting from standard 5/10/15 blocks)
-    - cron: '*/12 * * * *'
+    # Runs every 2 minutes (offsetting from standard 5/10/15 blocks)
+    - cron: '*/2 * * * *'
   workflow_dispatch: 
 
 jobs:
